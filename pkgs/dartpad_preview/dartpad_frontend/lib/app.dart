@@ -977,7 +977,6 @@ final class _AppState extends State<App> {
             path: workspacePath,
             projectRoot: _projectDir,
           ),
-          openConsole: ({reveal}) => _openConsole(session, reveal: reveal),
         ),
         if (activeTab is CodeMirrorTab)
           MainEditorActions(
@@ -1039,26 +1038,18 @@ final class _AppState extends State<App> {
     if (!_isCurrent(session)) {
       return;
     }
-    void dispatch() {
-      if (!mounted || !_isCurrent(session)) {
-        return;
-      }
-      final index = reveal == null ? null : session.console.indexOf(reveal);
-      session.events.dispatch(OpenConsoleEvent(reveal: index));
-    }
-
-    // The console receives log events asynchronously, so look up [reveal]
-    // after events dispatched before this call are delivered.
-    void dispatchAfterLogs() => reveal == null ? dispatch() : Timer.run(dispatch);
-
     if (!_isLargeScreen && _selectedSmallScreenTab != SmallScreenTab.code) {
       setState(() {
         _selectedSmallScreenTab = SmallScreenTab.code;
       });
-      context.binding.addPostFrameCallback(dispatchAfterLogs);
+      context.binding.addPostFrameCallback(() {
+        if (_isCurrent(session)) {
+          session.events.dispatch(OpenConsoleEvent(reveal: reveal));
+        }
+      });
       return;
     }
-    dispatchAfterLogs();
+    session.events.dispatch(OpenConsoleEvent(reveal: reveal));
   }
 
   void _handleGlobalKeyDown(web.KeyboardEvent event) {
