@@ -7,6 +7,7 @@ library;
 
 import 'package:dartpad_frontend/features/editor/components/small_screen_tab_bar.dart';
 import 'package:dartpad_frontend/features/shared/components/app_bar.dart';
+import 'package:dartpad_frontend/features/startup/examples.g.dart';
 import 'package:jaspr_test/client_test.dart';
 import 'package:web/web.dart' as web;
 
@@ -57,7 +58,7 @@ void main() {
     newButton.click();
     await pumpEventQueue();
     final items = web.document.querySelectorAll('.dropdown-menu-panel-left .dropdown-menu-item');
-    expect(items.length, 7);
+    expect(items.length, Examples.all.length);
     (items.item(0)! as web.HTMLButtonElement).click();
     await pumpEventQueue();
 
@@ -87,7 +88,7 @@ void main() {
     expect((dividers.item(1)! as web.HTMLElement).textContent, 'Flutter');
 
     final items = web.document.querySelectorAll('.dropdown-menu-panel-left .dropdown-menu-item');
-    expect(items.length, 7);
+    expect(items.length, Examples.all.length);
     (items.item(2)! as web.HTMLButtonElement).click();
     await pumpEventQueue();
 
